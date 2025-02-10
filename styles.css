@@ -112,3 +112,25 @@ body {
         }
     }
 }
+
+/* ... (previous styles remain the same) ... */
+
+.fade-text.final-quote {
+    font-size: clamp(18px, 6vw, 28px);
+    color: #ff69b4;
+    text-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+    line-height: 1.8;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+    }
+    to {
+        text-shadow: 0 0 25px rgba(255, 105, 180, 0.9),
+                     0 0 35px rgba(255, 105, 180, 0.7);
+    }
+}
+
+/* Make sure this is added to your existing CSS file */
