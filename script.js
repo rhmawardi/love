@@ -133,14 +133,15 @@ class HeartAnimation {
         this.textElement.classList.add('final-quote');
         this.textElement.classList.add('visible');
         
-        // Keep final quote visible for 10 seconds
-        setTimeout(() => {
-            this.textElement.classList.remove('visible');
-            this.textElement.classList.remove('final-quote');
-        }, 10000);
+        // Removed the setTimeout that was hiding the final quote
     }
 
     async changeText() {
+        // Don't change text if final quote is showing
+        if (this.textElement.classList.contains('final-quote')) {
+            return;
+        }
+        
         this.textElement.classList.remove('visible');
         this.textElement.classList.remove('final-quote');
         
@@ -165,7 +166,11 @@ class HeartAnimation {
                 playButton.classList.remove('playing');
                 clearInterval(textInterval);
                 this.textElement.classList.remove('visible');
-                this.textElement.classList.remove('final-quote');
+                
+                // Don't remove final-quote class when pausing
+                if (!this.textElement.classList.contains('final-quote')) {
+                    this.textElement.classList.remove('visible');
+                }
             } else {
                 if (audio.ended) {
                     audio.currentTime = 0;
@@ -173,8 +178,12 @@ class HeartAnimation {
                 audio.play();
                 playButton.textContent = '❤ Pause Music ❤';
                 playButton.classList.add('playing');
-                this.changeText();
-                textInterval = setInterval(() => this.changeText(), 5000);
+                
+                // Only start changing text if final quote isn't showing
+                if (!this.textElement.classList.contains('final-quote')) {
+                    this.changeText();
+                    textInterval = setInterval(() => this.changeText(), 5000);
+                }
             }
             isPlaying = !isPlaying;
         });
@@ -189,7 +198,7 @@ class HeartAnimation {
             // Show final quote after music ends
             setTimeout(() => {
                 this.showFinalQuote();
-            }, 500); // Small delay after music ends before showing final quote
+            }, 500);
         });
     }
 }
