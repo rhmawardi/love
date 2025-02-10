@@ -12,55 +12,55 @@ class HeartAnimation {
             "you're the reason\nI believe in love",
             "forever isn't long enough\nwhen I'm with you",
             "you make my heart smile\nevery single day",
-			"every second without you\nfeels like forever",
-"your love is the anchor\nthat keeps me grounded",
-"in a thousand lifetimes\nI'd still choose you",
-"my favorite place\nis next to you",
-"your touch makes my heart\ndance with joy",
-"you're the missing chapter\nin my life's story",
-"like rivers flow to seas\nmy thoughts flow to you",
-"your love is the magic\nthat makes life beautiful",
-"in your embrace\nI found paradise",
-"each moment with you\nis a gift I cherish",
-"you're the harmony\nto my melody",
-"like stars need night\nI need you in my life",
-"my heart skips a beat\nwhen you're near",
-"you paint my world\nwith colors of love",
-"in your eyes I see\nall my tomorrows",
-"our love story\nwrites itself daily",
-"your smile brightens\nmy darkest days",
-"like honey to bees\nI'm drawn to you",
-"every love song\nreminds me of us",
-"in your heart\nI built my home",
-"your love gives wings\nto my dreams",
-"each breath I take\nwhispers your name",
-"like spring brings flowers\nyou bring joy to my life",
-"my world became perfect\nwhen you entered it",
-"your love fills spaces\nI never knew were empty",
-"in the book of life\nyou're my favorite chapter",
-"like puzzle pieces\nwe fit perfectly",
-"every moment apart\nmakes our love stronger",
-"your presence makes\nmy world complete",
-"in the symphony of life\nyou're my favorite song",
-"like sun lights the earth\nyour love lights my way",
-"my heart found its purpose\nwhen it found you",
-"you're the answer\nto my heart's prayers",
-"each sunset with you\nis a promise of tomorrow",
-"like compass points north\nmy heart points to you",
-"in the garden of love\nyou're my rarest flower",
-"your love is the shelter\nfrom life's storms",
-"every step I take\nleads me to you",
-"like waves need shore\nI need your embrace",
-"my dreams come alive\nwhen you're near"
-			
-			
+            "every second without you\nfeels like forever",
+            "your love is the anchor\nthat keeps me grounded",
+            "in a thousand lifetimes\nI'd still choose you",
+            "my favorite place\nis next to you",
+            "your touch makes my heart\ndance with joy",
+            "you're the missing chapter\nin my life's story",
+            "like rivers flow to seas\nmy thoughts flow to you",
+            "your love is the magic\nthat makes life beautiful",
+            "in your embrace\nI found paradise",
+            "each moment with you\nis a gift I cherish",
+            "you're the harmony\nto my melody",
+            "like stars need night\nI need you in my life",
+            "my heart skips a beat\nwhen you're near",
+            "you paint my world\nwith colors of love",
+            "in your eyes I see\nall my tomorrows",
+            "our love story\nwrites itself daily",
+            "your smile brightens\nmy darkest days",
+            "like honey to bees\nI'm drawn to you",
+            "every love song\nreminds me of us",
+            "in your heart\nI built my home",
+            "your love gives wings\nto my dreams",
+            "each breath I take\nwhispers your name",
+            "like spring brings flowers\nyou bring joy to my life",
+            "my world became perfect\nwhen you entered it",
+            "your love fills spaces\nI never knew were empty",
+            "in the book of life\nyou're my favorite chapter",
+            "like puzzle pieces\nwe fit perfectly",
+            "every moment apart\nmakes our love stronger",
+            "your presence makes\nmy world complete",
+            "in the symphony of life\nyou're my favorite song",
+            "like sun lights the earth\nyour love lights my way",
+            "my heart found its purpose\nwhen it found you",
+            "you're the answer\nto my heart's prayers",
+            "each sunset with you\nis a promise of tomorrow",
+            "like compass points north\nmy heart points to you",
+            "in the garden of love\nyou're my rarest flower",
+            "your love is the shelter\nfrom life's storms",
+            "every step I take\nleads me to you",
+            "like waves need shore\nI need your embrace",
+            "my dreams come alive\nwhen you're near"
         ];
         
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
+        this.isMobile = window.innerWidth <= 768;
         
         this.initializeHearts();
         this.initializeAudio();
+        this.initializeResizeListener();
     }
 
     createHeart() {
@@ -69,30 +69,53 @@ class HeartAnimation {
         heart.classList.add('heart');
         
         heart.style.left = `${Math.random() * 100}vw`;
-        heart.style.animationDuration = `${Math.random() * 4 + 4}s`;
-        heart.style.opacity = Math.random() * 0.5 + 0.3;
+        
+        // Smaller size range for mobile
+        const baseSize = this.isMobile ? 20 : 40;
+        const sizeVariation = Math.random() * (this.isMobile ? 10 : 20) + baseSize;
+        heart.style.fontSize = `${sizeVariation}px`;
+        
+        // Adjust animation duration for mobile
+        const duration = this.isMobile ? 
+            (Math.random() * 2 + 3) : // 3-5 seconds on mobile
+            (Math.random() * 4 + 4);  // 4-8 seconds on desktop
+        heart.style.animationDuration = `${duration}s`;
+        
+        // Adjust opacity for better visibility on mobile
+        heart.style.opacity = Math.random() * 0.4 + (this.isMobile ? 0.4 : 0.3);
         
         const hue = Math.random() * 60 + 320;
         const lightness = Math.random() * 30 + 60;
         heart.style.color = `hsl(${hue}, 100%, ${lightness}%)`;
         
-        const baseSize = 40;
-        const sizeVariation = Math.random() * 20 + baseSize;
-        heart.style.fontSize = `${sizeVariation}px`;
-        
         document.body.appendChild(heart);
         
         setTimeout(() => {
             heart.remove();
-        }, 6000);
+        }, duration * 1000);
     }
 
     initializeHearts() {
-        for(let i = 0; i < 15; i++) {
+        // Fewer initial hearts on mobile
+        const initialHearts = this.isMobile ? 8 : 15;
+        
+        for(let i = 0; i < initialHearts; i++) {
             setTimeout(() => this.createHeart(), Math.random() * 3000);
         }
         
-        setInterval(() => this.createHeart(), 400);
+        // Adjust heart creation interval based on device
+        const interval = this.isMobile ? 600 : 400;
+        setInterval(() => this.createHeart(), interval);
+    }
+
+    initializeResizeListener() {
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.isMobile = window.innerWidth <= 768;
+            }, 250);
+        });
     }
 
     async changeText() {
