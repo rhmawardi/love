@@ -51,8 +51,16 @@ class HeartAnimation {
             "your love is the shelter\nfrom life's storms",
             "every step I take\nleads me to you",
             "like waves need shore\nI need your embrace",
-            "my dreams come alive\nwhen you're near"
+            "my dreams come alive\nwhen you're near",
+            "your love is pure\nlike morning dew",
+            "together we create\nour perfect story",
+            "every heartbeat whispers\nyour precious name",
+            "in your smile I found\nmy eternal happiness",
+            "our love blooms forever\nlike spring flowers"
         ];
+        
+        // Special final quote
+        this.finalQuote = "💖 To My Forever Love 💖\n\nIn every beat of my heart,\nIn every breath I take,\nIn every moment we share,\nMy love for you grows stronger.\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ With endless love ~";
         
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
@@ -70,18 +78,15 @@ class HeartAnimation {
         
         heart.style.left = `${Math.random() * 100}vw`;
         
-        // Smaller size range for mobile
         const baseSize = this.isMobile ? 20 : 40;
         const sizeVariation = Math.random() * (this.isMobile ? 10 : 20) + baseSize;
         heart.style.fontSize = `${sizeVariation}px`;
         
-        // Adjust animation duration for mobile
         const duration = this.isMobile ? 
-            (Math.random() * 2 + 3) : // 3-5 seconds on mobile
-            (Math.random() * 4 + 4);  // 4-8 seconds on desktop
+            (Math.random() * 2 + 3) : 
+            (Math.random() * 4 + 4);
         heart.style.animationDuration = `${duration}s`;
         
-        // Adjust opacity for better visibility on mobile
         heart.style.opacity = Math.random() * 0.4 + (this.isMobile ? 0.4 : 0.3);
         
         const hue = Math.random() * 60 + 320;
@@ -96,14 +101,12 @@ class HeartAnimation {
     }
 
     initializeHearts() {
-        // Fewer initial hearts on mobile
         const initialHearts = this.isMobile ? 8 : 15;
         
         for(let i = 0; i < initialHearts; i++) {
             setTimeout(() => this.createHeart(), Math.random() * 3000);
         }
         
-        // Adjust heart creation interval based on device
         const interval = this.isMobile ? 600 : 400;
         setInterval(() => this.createHeart(), interval);
     }
@@ -118,20 +121,34 @@ class HeartAnimation {
         });
     }
 
-    async changeText() {
+    async showFinalQuote() {
         // Fade out current text
         this.textElement.classList.remove('visible');
         
-        // Wait for fade out animation
+        // Wait for fade out
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Change text
-        this.textElement.innerHTML = this.romanticQuotes[this.currentQuoteIndex].replace('\n', '<br>');
+        // Set and show final quote
+        this.textElement.innerHTML = this.finalQuote.replace(/\n/g, '<br>');
+        this.textElement.classList.add('final-quote');
+        this.textElement.classList.add('visible');
         
-        // Increment index and loop back if needed
+        // Keep final quote visible for 10 seconds
+        setTimeout(() => {
+            this.textElement.classList.remove('visible');
+            this.textElement.classList.remove('final-quote');
+        }, 10000);
+    }
+
+    async changeText() {
+        this.textElement.classList.remove('visible');
+        this.textElement.classList.remove('final-quote');
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        this.textElement.innerHTML = this.romanticQuotes[this.currentQuoteIndex].replace('\n', '<br>');
         this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.romanticQuotes.length;
         
-        // Fade in new text
         this.textElement.classList.add('visible');
     }
 
@@ -147,20 +164,17 @@ class HeartAnimation {
                 playButton.textContent = '❤ Play Music ❤';
                 playButton.classList.remove('playing');
                 clearInterval(textInterval);
-                // Reset text
-                this.currentQuoteIndex = 0;
                 this.textElement.classList.remove('visible');
+                this.textElement.classList.remove('final-quote');
             } else {
-                // Reset audio to start if it has ended
                 if (audio.ended) {
                     audio.currentTime = 0;
                 }
                 audio.play();
                 playButton.textContent = '❤ Pause Music ❤';
                 playButton.classList.add('playing');
-                // Start text animation
                 this.changeText();
-                textInterval = setInterval(() => this.changeText(), 5000); // Change text every 5 seconds
+                textInterval = setInterval(() => this.changeText(), 5000);
             }
             isPlaying = !isPlaying;
         });
@@ -171,13 +185,15 @@ class HeartAnimation {
             playButton.classList.remove('playing');
             isPlaying = false;
             clearInterval(textInterval);
-            this.currentQuoteIndex = 0;
-            this.textElement.classList.remove('visible');
+            
+            // Show final quote after music ends
+            setTimeout(() => {
+                this.showFinalQuote();
+            }, 500); // Small delay after music ends before showing final quote
         });
     }
 }
 
-// Initialize animation when page loads
 window.addEventListener('DOMContentLoaded', () => {
     new HeartAnimation();
 });
