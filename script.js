@@ -151,6 +151,10 @@ class HeartAnimation {
                 this.currentQuoteIndex = 0;
                 this.textElement.classList.remove('visible');
             } else {
+                // Reset audio to start if it has ended
+                if (audio.ended) {
+                    audio.currentTime = 0;
+                }
                 audio.play();
                 playButton.textContent = '❤ Pause Music ❤';
                 playButton.classList.add('playing');
