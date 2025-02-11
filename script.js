@@ -60,7 +60,7 @@ class HeartAnimation {
         ];
         
         // Special final quote
-        this.finalQuote = "💖 To My Forever Love 💖\n\nIn every beat of my heart,\nIn every breath I take,\nIn every moment we share,\nMy love for you grows stronger.\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ With endless love ~";
+        this.finalQuote = "💖 To My Forever Love 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ I Love You Endlessly ❤️ ~";
         
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
