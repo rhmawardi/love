@@ -60,7 +60,7 @@ class HeartAnimation {
         ];
         
         // Special final quote
-        this.finalQuote = "💖 To My Forever Love 💖\n\nIn every beat of my heart,\nIn every breath I take,\nIn every moment we share,\nMy love for you grows stronger.\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ With endless love ~";
+        this.finalQuote = "💖 To My Forever Love 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ I Love You Endlessly ❤️ ~";
         
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
@@ -128,15 +128,12 @@ class HeartAnimation {
         // Wait for fade out
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Add the image
-        const finalImage = document.getElementById('final-image');
-        finalImage.innerHTML = '<img src="love.jpg" alt="Love">';
-        finalImage.classList.add('visible');
-        
         // Set and show final quote
         this.textElement.innerHTML = this.finalQuote.replace(/\n/g, '<br>');
         this.textElement.classList.add('final-quote');
         this.textElement.classList.add('visible');
+        
+        // Removed the setTimeout that was hiding the final quote
     }
 
     async changeText() {
@@ -147,10 +144,6 @@ class HeartAnimation {
         
         this.textElement.classList.remove('visible');
         this.textElement.classList.remove('final-quote');
-        
-        // Hide the image if it's visible
-        const finalImage = document.getElementById('final-image');
-        finalImage.classList.remove('visible');
         
         await new Promise(resolve => setTimeout(resolve, 1000));
         
@@ -213,9 +206,3 @@ class HeartAnimation {
 window.addEventListener('DOMContentLoaded', () => {
     new HeartAnimation();
 });
-
-// Tambahkan variasi emoji hati yang berbeda
-const heartVariations = ['❤', '💖', '💝', '💕', '💗', '💓', '💘'];
-// Saat membuat heart, pilih secara random
-heart.innerHTML = heartVariations[Math.floor(Math.random() * heartVariations.length)];
-
