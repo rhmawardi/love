@@ -134,3 +134,114 @@ body {
 }
 
 /* Make sure this is added to your existing CSS file */
+
+/* styles.css */
+/* ... (previous styles remain the same) ... */
+
+.final-image {
+    display: none;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.final-image.visible {
+    display: block;
+    opacity: 1;
+}
+
+.final-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Add responsive styles for the image */
+@media (max-width: 768px) {
+    .final-image {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .final-image {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+.heart:hover {
+    transform: scale(1.5);
+    filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.8));
+    transition: all 0.3s ease;
+}
+
+body {
+    background: linear-gradient(45deg, #000000, #1a0011);
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.fade-text.final-quote {
+    animation: typewriter 4s steps(40) 1s 1 normal both,
+               glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+class PetalAnimation {
+    createPetal() {
+        const petal = document.createElement('div');
+        petal.innerHTML = '🌸';
+        petal.classList.add('petal');
+        document.body.appendChild(petal);
+        
+        setTimeout(() => petal.remove(), 10000);
+    }
+    
+    initialize() {
+        setInterval(() => this.createPetal(), 3000);
+    }
+}
+
+// CSS untuk petal
+.petal {
+    position: fixed;
+    font-size: 15px;
+    animation: fall 10s linear infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-10vh) rotate(0deg) translateX(0);
+    }
+    100% {
+        transform: translateY(110vh) rotate(720deg) translateX(20vw);
+    }
+}
