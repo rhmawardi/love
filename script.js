@@ -60,7 +60,7 @@ class HeartAnimation {
         ];
         
         // Special final quote
-        this.finalQuote = "💖 To My Forever Love 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ I Love You Endlessly ❤️ ~";
+        this.finalQuote = "💖 To: F.D.U \nMy Forever Love 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ I Love You Endlessly ❤️ ~\nby: R.H.M";
         
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
