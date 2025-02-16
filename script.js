@@ -59,7 +59,7 @@ class HeartAnimation {
             "our love blooms forever\nlike spring flowers"
         ];
         
-        // Special final quote
+        // Special final quote with italicized text
         this.finalQuote = "To: F.D.U \n💖 *My Forever Love* 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ *I Love You Endlessly* ❤️ ~\nby: R.H.M";
         
         this.currentQuoteIndex = 0;
@@ -128,12 +128,12 @@ class HeartAnimation {
         // Wait for fade out
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Set and show final quote
-        this.textElement.innerHTML = this.finalQuote.replace(/\n/g, '<br>');
+        // Set and show final quote, replacing both newlines and markdown italic syntax
+        this.textElement.innerHTML = this.finalQuote
+            .replace(/\n/g, '<br>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>');
         this.textElement.classList.add('final-quote');
         this.textElement.classList.add('visible');
-        
-        // Removed the setTimeout that was hiding the final quote
     }
 
     async changeText() {
