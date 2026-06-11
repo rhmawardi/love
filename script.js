@@ -1,4 +1,3 @@
-// script.js
 class HeartAnimation {
     constructor() {
         this.romanticQuotes = [
@@ -58,128 +57,201 @@ class HeartAnimation {
             "in your smile I found\nmy eternal happiness",
             "our love blooms forever\nlike spring flowers"
         ];
-        
-        // Special final quote with italicized text
-        this.finalQuote = "To: F.D.U \n💖 *My Forever Love* 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ *I Love You Endlessly* ❤️ ~\nby: R.H.M";
-        
+
+        this.finalQuote = "💖 To My Forever Love 💖\n\nYou are my everything,\nMy today and all my tomorrows.\n\n~ I Love You Endlessly ❤️ ~";
+
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
         this.isMobile = window.innerWidth <= 768;
-        
-        this.initializeHearts();
-        this.initializeAudio();
-        this.initializeResizeListener();
+        this.heartEmojis = ['❤', '💕', '💖', '💗', '💘', '💝', '🩷', '❤️‍🔥'];
+
+        this.textElement.innerHTML = '💖\nKlik tombol di bawah\nuntuk memulai 💖';
+        this.textElement.classList.add('visible');
+
+        this.initCanvas();
+        this.initHearts();
+        this.initAudio();
+        this.initVisualizer();
+        this.initResizeListener();
+    }
+
+    initCanvas() {
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animId;
+
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        class Sparkle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3 - 0.15;
+                this.opacity = Math.random() * 0.6 + 0.1;
+                this.hue = Math.random() * 40 + 320;
+                this.pulse = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.005;
+                this.life = Math.random() * 300 + 200;
+                this.maxLife = this.life;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.pulse += this.pulseSpeed;
+                this.life--;
+                if (this.life <= 0) this.reset();
+            }
+            draw(ctx) {
+                const pulseOpacity = Math.sin(this.pulse) * 0.3 + 0.7;
+                const alpha = (this.life / this.maxLife) * this.opacity * pulseOpacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 80%, ${alpha})`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 80%, ${alpha * 0.12})`;
+                ctx.fill();
+            }
+        }
+
+        const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 80);
+        for (let i = 0; i < count; i++) {
+            particles.push(new Sparkle());
+        }
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const p of particles) {
+                p.update();
+                p.draw(ctx);
+            }
+            animId = requestAnimationFrame(animate);
+        };
+        animate();
+
+        this.canvasCleanup = () => cancelAnimationFrame(animId);
+    }
+
+    getRandomHeart() {
+        return this.heartEmojis[Math.floor(Math.random() * this.heartEmojis.length)];
     }
 
     createHeart() {
         const heart = document.createElement('div');
-        heart.innerHTML = '❤';
+        heart.textContent = this.getRandomHeart();
         heart.classList.add('heart');
-        
-        heart.style.left = `${Math.random() * 100}vw`;
-        
-        const baseSize = this.isMobile ? 20 : 40;
-        const sizeVariation = Math.random() * (this.isMobile ? 10 : 20) + baseSize;
-        heart.style.fontSize = `${sizeVariation}px`;
-        
-        const duration = this.isMobile ? 
-            (Math.random() * 2 + 3) : 
-            (Math.random() * 4 + 4);
+
+        heart.style.left = `${Math.random() * 95}vw`;
+
+        const baseSize = this.isMobile ? 18 : 28;
+        const size = Math.random() * (this.isMobile ? 12 : 22) + baseSize;
+        heart.style.fontSize = `${size}px`;
+
+        const duration = Math.random() * 5 + 6;
         heart.style.animationDuration = `${duration}s`;
-        
-        heart.style.opacity = Math.random() * 0.4 + (this.isMobile ? 0.4 : 0.3);
-        
-        const hue = Math.random() * 60 + 320;
-        const lightness = Math.random() * 30 + 60;
-        heart.style.color = `hsl(${hue}, 100%, ${lightness}%)`;
-        
+
+        const hue = Math.random() * 40 + 320;
+        const sat = 80 + Math.random() * 20;
+        const lit = 55 + Math.random() * 30;
+        heart.style.color = `hsl(${hue}, ${sat}%, ${lit}%)`;
+
         document.body.appendChild(heart);
-        
-        setTimeout(() => {
-            heart.remove();
-        }, duration * 1000);
+
+        setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    initializeHearts() {
-        const initialHearts = this.isMobile ? 8 : 15;
-        
-        for(let i = 0; i < initialHearts; i++) {
-            setTimeout(() => this.createHeart(), Math.random() * 3000);
+    initHearts() {
+        const count = this.isMobile ? 6 : 12;
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => this.createHeart(), Math.random() * 4000);
         }
-        
-        const interval = this.isMobile ? 600 : 400;
-        setInterval(() => this.createHeart(), interval);
+
+        const interval = this.isMobile ? 700 : 450;
+        this.heartInterval = setInterval(() => this.createHeart(), interval);
     }
 
-    initializeResizeListener() {
-        let resizeTimeout;
+    initResizeListener() {
+        let timeout;
         window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
                 this.isMobile = window.innerWidth <= 768;
             }, 250);
         });
     }
 
+    initVisualizer() {
+        const container = document.getElementById('visualizer');
+        const barCount = 10;
+        for (let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'vis-bar';
+            container.appendChild(bar);
+        }
+    }
+
     async showFinalQuote() {
-        // Fade out current text
         this.textElement.classList.remove('visible');
-        
-        // Wait for fade out
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Set and show final quote, replacing both newlines and markdown italic syntax
-        this.textElement.innerHTML = this.finalQuote
-            .replace(/\n/g, '<br>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        await new Promise(r => setTimeout(r, 1000));
+
+        this.textElement.innerHTML = this.finalQuote.replace(/\n/g, '<br>');
         this.textElement.classList.add('final-quote');
         this.textElement.classList.add('visible');
     }
 
     async changeText() {
-        // Don't change text if final quote is showing
-        if (this.textElement.classList.contains('final-quote')) {
-            return;
-        }
-        
+        if (this.textElement.classList.contains('final-quote')) return;
+
         this.textElement.classList.remove('visible');
-        this.textElement.classList.remove('final-quote');
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
+        await new Promise(r => setTimeout(r, 1000));
+
         this.textElement.innerHTML = this.romanticQuotes[this.currentQuoteIndex].replace('\n', '<br>');
         this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.romanticQuotes.length;
-        
+
         this.textElement.classList.add('visible');
     }
 
-    initializeAudio() {
+    initAudio() {
         const audio = document.getElementById('bgMusic');
         const playButton = document.getElementById('playButton');
+        const btnIcon = playButton.querySelector('.btn-icon');
+        const btnText = playButton.querySelector('.btn-text');
+        const visualizer = document.getElementById('visualizer');
         let isPlaying = false;
         let textInterval;
 
         playButton.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
-                playButton.textContent = '❤ Play Music ❤';
+                btnIcon.textContent = '▶';
+                btnText.textContent = 'Mulai Musik';
                 playButton.classList.remove('playing');
+                visualizer.classList.remove('active');
                 clearInterval(textInterval);
-                this.textElement.classList.remove('visible');
-                
-                // Don't remove final-quote class when pausing
                 if (!this.textElement.classList.contains('final-quote')) {
                     this.textElement.classList.remove('visible');
                 }
             } else {
-                if (audio.ended) {
-                    audio.currentTime = 0;
-                }
+                audio.currentTime = 0;
                 audio.play();
-                playButton.textContent = '❤ Pause Music ❤';
+                btnIcon.textContent = '⏸';
+                btnText.textContent = 'Jeda Musik';
                 playButton.classList.add('playing');
-                
-                // Only start changing text if final quote isn't showing
+                visualizer.classList.add('active');
+
                 if (!this.textElement.classList.contains('final-quote')) {
                     this.changeText();
                     textInterval = setInterval(() => this.changeText(), 5000);
@@ -188,17 +260,15 @@ class HeartAnimation {
             isPlaying = !isPlaying;
         });
 
-        // Handle audio ending
         audio.addEventListener('ended', () => {
-            playButton.textContent = '❤ Play Music ❤';
+            btnIcon.textContent = '▶';
+            btnText.textContent = 'Mulai Musik';
             playButton.classList.remove('playing');
+            visualizer.classList.remove('active');
             isPlaying = false;
             clearInterval(textInterval);
-            
-            // Show final quote after music ends
-            setTimeout(() => {
-                this.showFinalQuote();
-            }, 500);
+
+            setTimeout(() => this.showFinalQuote(), 500);
         });
     }
 }

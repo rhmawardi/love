@@ -3,26 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Hearts</title>
+    <title>Untukmu Selamanya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Emoji Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
 </head>
 <body>
-    <div class="text-container">
-        <div id="romantic-text" class="fade-text"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="glass-container">
+        <div class="ornament ornament-top">✧</div>
+        <div class="text-container">
+            <div id="romantic-text" class="fade-text"></div>
+        </div>
+        <div class="ornament ornament-bottom">✧</div>
     </div>
-    
-    <!-- Audio Player -->
+
     <div class="audio-container">
-        <button id="playButton" class="play-button">❤ Play Music ❤</button>
+        <button id="playButton" class="play-button">
+            <span class="btn-icon">▶</span>
+            <span class="btn-text">Mulai Musik</span>
+        </button>
         <audio id="bgMusic">
             <source src="love.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
         </audio>
     </div>
-    
+
+    <div class="music-visualizer" id="visualizer"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
