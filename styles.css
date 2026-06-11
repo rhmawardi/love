@@ -354,18 +354,18 @@ body {
 /* ---- Mobile (480px) ---- */
 @media (max-width: 480px) {
     .glass-container {
-        padding: 28px 20px;
+        padding: 24px 16px;
         width: 92%;
-        border-radius: 20px;
+        border-radius: 18px;
         max-width: none;
     }
 
     .fade-text {
-        font-size: clamp(14px, 4.5vw, 19px);
+        font-size: clamp(13px, 4vw, 17px);
     }
 
     .fade-text.final-quote {
-        font-size: clamp(16px, 5vw, 22px);
+        font-size: clamp(15px, 4.5vw, 20px);
         line-height: 1.6;
     }
 
@@ -393,17 +393,17 @@ body {
 /* ---- Small Mobile (360px) ---- */
 @media (max-width: 380px) {
     .glass-container {
-        padding: 20px 14px;
+        padding: 16px 12px;
         width: 94%;
-        border-radius: 16px;
+        border-radius: 14px;
     }
 
     .fade-text {
-        font-size: clamp(12px, 4vw, 16px);
+        font-size: clamp(11px, 3.8vw, 14px);
     }
 
     .fade-text.final-quote {
-        font-size: clamp(14px, 4.5vw, 19px);
+        font-size: clamp(13px, 4.2vw, 17px);
     }
 
     .play-button {
