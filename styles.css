@@ -62,23 +62,23 @@ body {
 
 .ornament {
     position: absolute;
-    font-size: 18px;
-    color: rgba(255, 182, 219, 0.4);
-    letter-spacing: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: rgba(255, 182, 219, 0.35);
     user-select: none;
     pointer-events: none;
 }
 
-.ornament-top {
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+.ornament-left {
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
 }
 
-.ornament-bottom {
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+.ornament-right {
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
 }
 
 .text-container {
@@ -360,6 +360,14 @@ body {
         max-width: none;
     }
 
+    .ornament-left {
+        left: 6px;
+    }
+
+    .ornament-right {
+        right: 6px;
+    }
+
     .fade-text {
         font-size: clamp(13px, 4vw, 17px);
     }
@@ -396,6 +404,10 @@ body {
         padding: 16px 12px;
         width: 94%;
         border-radius: 14px;
+    }
+
+    .ornament {
+        display: none;
     }
 
     .fade-text {
