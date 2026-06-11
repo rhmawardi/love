@@ -62,8 +62,10 @@ class HeartAnimation {
 
         this.currentQuoteIndex = 0;
         this.textElement = document.getElementById('romantic-text');
-        this.isMobile = window.innerWidth <= 768;
         this.heartEmojis = ['❤', '💕', '💖', '💗', '💘', '💝', '🩷', '❤️‍🔥'];
+
+        this.detectDevice();
+        this.setupOrientation();
 
         this.textElement.innerHTML = '💖\nKlik tombol di bawah\nuntuk memulai 💖';
         this.textElement.classList.add('visible');
@@ -72,7 +74,49 @@ class HeartAnimation {
         this.initHearts();
         this.initAudio();
         this.initVisualizer();
-        this.initResizeListener();
+        this.initResponsive();
+    }
+
+    detectDevice() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        this.isMobile = w <= 768;
+        this.isSmallMobile = w <= 380;
+        this.isLandscape = h < w && h <= 500;
+        this.isTablet = w > 768 && w <= 1024;
+        this.isLargeScreen = w >= 1400;
+    }
+
+    setupOrientation() {
+        if (screen.orientation) {
+            screen.orientation.addEventListener('change', () => {
+                setTimeout(() => this.handleResize(), 300);
+            });
+        }
+    }
+
+    getHeartConfig() {
+        if (this.isLandscape) {
+            return { initial: 4, interval: 900, baseSize: 14, variation: 8 };
+        }
+        if (this.isSmallMobile) {
+            return { initial: 4, interval: 800, baseSize: 14, variation: 8 };
+        }
+        if (this.isMobile) {
+            return { initial: 6, interval: 700, baseSize: 18, variation: 10 };
+        }
+        if (this.isTablet) {
+            return { initial: 10, interval: 550, baseSize: 24, variation: 16 };
+        }
+        return { initial: 14, interval: 400, baseSize: 28, variation: 20 };
+    }
+
+    getCanvasParticleCount() {
+        const area = window.innerWidth * window.innerHeight;
+        if (area < 200000) return 25;
+        if (area < 500000) return 45;
+        if (area < 1000000) return 65;
+        return 80;
     }
 
     initCanvas() {
@@ -86,7 +130,6 @@ class HeartAnimation {
             canvas.height = window.innerHeight;
         };
         resize();
-        window.addEventListener('resize', resize);
 
         class Sparkle {
             constructor() {
@@ -95,10 +138,10 @@ class HeartAnimation {
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.5;
+                this.size = Math.random() * 2 + 0.5;
                 this.speedX = (Math.random() - 0.5) * 0.3;
                 this.speedY = (Math.random() - 0.5) * 0.3 - 0.15;
-                this.opacity = Math.random() * 0.6 + 0.1;
+                this.opacity = Math.random() * 0.5 + 0.1;
                 this.hue = Math.random() * 40 + 320;
                 this.pulse = Math.random() * Math.PI * 2;
                 this.pulseSpeed = Math.random() * 0.02 + 0.005;
@@ -114,22 +157,34 @@ class HeartAnimation {
             }
             draw(ctx) {
                 const pulseOpacity = Math.sin(this.pulse) * 0.3 + 0.7;
-                const alpha = (this.life / this.maxLife) * this.opacity * pulseOpacity;
+                const ratio = this.life / this.maxLife;
+                const alpha = ratio * this.opacity * pulseOpacity;
+                const glowSize = this.size * 2.5;
+
+                ctx.globalAlpha = alpha * 0.15;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 80%, 1)`;
+                ctx.fill();
+
+                ctx.globalAlpha = alpha;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${this.hue}, 100%, 80%, ${alpha})`;
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 85%, 1)`;
                 ctx.fill();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${this.hue}, 100%, 80%, ${alpha * 0.12})`;
-                ctx.fill();
+
+                ctx.globalAlpha = 1;
             }
         }
 
-        const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 80);
-        for (let i = 0; i < count; i++) {
-            particles.push(new Sparkle());
-        }
+        const initParticles = () => {
+            particles = [];
+            const count = this.getCanvasParticleCount();
+            for (let i = 0; i < count; i++) {
+                particles.push(new Sparkle());
+            }
+        };
+        initParticles();
 
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -141,6 +196,7 @@ class HeartAnimation {
         };
         animate();
 
+        this.canvasData = { particles, initParticles };
         this.canvasCleanup = () => cancelAnimationFrame(animId);
     }
 
@@ -153,13 +209,16 @@ class HeartAnimation {
         heart.textContent = this.getRandomHeart();
         heart.classList.add('heart');
 
-        heart.style.left = `${Math.random() * 95}vw`;
+        const emoji = heart.textContent;
+        const fontSize = emoji.length > 1 ? '24px' : '';
 
-        const baseSize = this.isMobile ? 18 : 28;
-        const size = Math.random() * (this.isMobile ? 12 : 22) + baseSize;
-        heart.style.fontSize = `${size}px`;
+        heart.style.left = `${Math.random() * 94}vw`;
 
-        const duration = Math.random() * 5 + 6;
+        const cfg = this.getHeartConfig();
+        const size = Math.random() * cfg.variation + cfg.baseSize;
+        heart.style.fontSize = fontSize || `${size}px`;
+
+        const duration = Math.random() * 4 + 5;
         heart.style.animationDuration = `${duration}s`;
 
         const hue = Math.random() * 40 + 320;
@@ -169,26 +228,46 @@ class HeartAnimation {
 
         document.body.appendChild(heart);
 
-        setTimeout(() => heart.remove(), duration * 1000);
+        setTimeout(() => {
+            if (heart.parentNode) heart.remove();
+        }, duration * 1000);
     }
 
     initHearts() {
-        const count = this.isMobile ? 6 : 12;
-        for (let i = 0; i < count; i++) {
-            setTimeout(() => this.createHeart(), Math.random() * 4000);
+        const cfg = this.getHeartConfig();
+        for (let i = 0; i < cfg.initial; i++) {
+            setTimeout(() => this.createHeart(), Math.random() * 3000);
         }
-
-        const interval = this.isMobile ? 700 : 450;
-        this.heartInterval = setInterval(() => this.createHeart(), interval);
+        this.heartInterval = setInterval(() => this.createHeart(), cfg.interval);
     }
 
-    initResizeListener() {
-        let timeout;
+    restartHearts() {
+        if (this.heartInterval) {
+            clearInterval(this.heartInterval);
+        }
+        const cfg = this.getHeartConfig();
+        this.heartInterval = setInterval(() => this.createHeart(), cfg.interval);
+    }
+
+    initResponsive() {
+        let resizeTimer;
+        const handleResize = () => {
+            this.detectDevice();
+
+            if (this.canvasData) {
+                this.canvasData.initParticles();
+            }
+
+            this.restartHearts();
+        };
+
         window.addEventListener('resize', () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                this.isMobile = window.innerWidth <= 768;
-            }, 250);
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(handleResize, 300);
+        });
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 400);
         });
     }
 
@@ -246,7 +325,7 @@ class HeartAnimation {
                 }
             } else {
                 audio.currentTime = 0;
-                audio.play();
+                audio.play().catch(() => {});
                 btnIcon.textContent = '⏸';
                 btnText.textContent = 'Jeda Musik';
                 playButton.classList.add('playing');
